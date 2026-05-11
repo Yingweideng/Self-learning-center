@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBM MQ 学习指南 - 从入门到精通</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+}
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+}
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+}
+        
+        header {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+}
+        
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+}
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        nav {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+        
+        nav h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            }
+        
+        nav ul li {
+            padding: 10px 15px;
+            background: #f8f9ff;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        nav ul li a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: #667eea;
+        }
+        
+        section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+        
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+}
+        
+        h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+}
+        
+        h4 {
+            color: #333;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+}
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+}
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+        
+        .highlight-box p {
+            margin: 0;
+            text-align: left;
+}
+        
+        .diagram {
+            background: #f8f9ff;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            overflow-x: auto;
+            line-height: 1.5;
+}
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+}
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+}
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+              }
+        
+        tr:nth-child(even) {
+            background: #f8f9ff;
+            }
+        
+        tr:hover {
+            background: #eef1ff;
+          }
+        
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+}
+        
+        .code-block .comment {
+            color: #75715e;
+        }
+        
+        .code-block .keyword {
+            color: #66d9ef;
+        }
+        
+        .code-block .string {
+            color: #e6db74;
+            }
+        
+        .code-block .function {
+            color: #a6e22e;
+            }
+        
+        .tip-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+}
+        
+        .tip-box strong {
+            color: #856404;
+}
+        
+        .success-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+}
+        
+        .success-box strong {
+            color: #155724;
+}
+        
+        .warning-box {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+}
+        
+        .warning-box strong {
+            color: #721c24;
+}
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+}
+        
+        li {
+            margin-bottom: 10px;
+}
+        
+        .checkmark {
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 10px;
+}
+        
+        footer {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            color: #666;
+}
+        
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin: 5px;
+}
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 10px;
+        }
+            
+            header, section, nav {
+                padding: 20px;
+}
+            
+            h1 {
+                font-size: 1.8em;
+}
+            
+            h2 {
+                font-size: 1.5em;
+}
+            
+            nav ul {
+                grid-template-columns: 1fr;
+            }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 IBM MQ 学习指南</h1>
+            <p class="subtitle">从入门到精通 - 通俗易懂的完整教程</p>
+            <div style="margin-top: 20px;">
+                <span class="badge">版本 1.0</span>
+                <span class="badge">更新时间：2026-05-11</span>
+                <span class="badge">作者：IBM MQ 学习小组</span>
+            </div>
+        </header>
+
+        <nav>
+            <h2>📑 目录</h2>
+            <ul>
+                <li><a href="#what-is-mq">1. 什么是 IBM MQ？</a></li>
+                <li><a href="#core-terms">2. 核心术语通俗解释</a></li>
+                <li><a href="#how-it-works">3. IBM MQ 工作原理</a></li>
+                <li><a href="#scenarios">4. 实际应用场景</a></li>
+                <li><a href="#hands-on">5. 动手实践示例</a></li>
+                <li><a href="#faq">6. 常见问题与解决方案</a></li>
+                <li><a href="#best-practices">7. 最佳实践建议</a></li>
+                <li><a href="#summary">8. 总结</a></li>
+            </ul>
+        </nav>
+
+        <section id="what-is-mq">
+            <h2>1. 什么是 IBM MQ？</h2>
+            
+            <h3>🎯 通俗理解</h3>
+            <div class="highlight-box">
+                <p>想象一下，你有一家快递公司（IBM MQ），负责在不同城市（应用程序）之间运送包裹（消息）。不管收件人现在在不在家，快递公司都会先把包裹存起来，等收件人方便的时候再送达。这就是 IBM MQ 的核心思想——<strong>异步消息传递</strong>。</p>
+            </div>
+
+            <h3>📖 正式定义</h3>
+            <p>IBM MQ（Message Queue）是 IBM 公司开发的企业级消息中间件，它允许应用程序之间通过消息进行通信，而无需直接连接。</p>
+
+            <div class="diagram">
+┌─────────────┐     消息      ┌─────────────┐
+│  应用程序 A  │ ───────────> │  应用程序 B  │
+│  (发送方)    │              │  (接收方)    │
+└─────────────┘              └─────────────┘
+       │                           │
+       ▼                           ▼
+   ┌───────────────────────────────────┐
+   │        IBM MQ 队列管理器          │
+   │    (负责存储和转发消息)           │
+   └───────────────────────────────────┘
+            </div>
+
+            <h3>❓ 为什么需要 IBM MQ？</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>场景</th>
+                        <th>没有 MQ</th>
+                        <th>使用 MQ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>系统宕机</td>
+                        <td>消息丢失</td>
+                        <td>✅ 消息保存，等恢复后送达</td>
+                    </tr>
+                    <tr>
+                        <td>流量高峰</td>
+                        <td>系统崩溃</td>
+                        <td>✅ 消息排队，慢慢处理</td>
+                    </tr>
+                    <tr>
+                        <td>系统升级</td>
+                        <td>需要停机</td>
+                        <td>✅ 不停机，消息继续累积</td>
+                    </tr>
+                    <tr>
+                        <td>不同系统</td>
+                        <td>难以对接</td>
+                        <td>✅ 统一接口，轻松对接</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="core-terms">
+            <h2>2. 核心术语通俗解释</h2>
+
+            <h3>📮 1. 队列管理器 (Queue Manager)</h3>
+            <div class="tip-box">
+                <strong>通俗解释：</strong>队列管理器就像一个"邮局总局"，它管理着所有的邮箱（队列），负责接收、存储和分发邮件（消息）。
+            </div>
+
+            <div class="diagram">
+┌─────────────────────────────────────┐
+│     队列管理器 (QMGR)               │
+│  ┌─────────┐  ┌─────────┐          │
+│  │ 队列 1  │  │ 队列 2  │  ...     │
+│  │ (邮箱)  │  │ (邮箱)  │          │
+│  └─────────┘  └─────────┘          │
+└─────────────────────────────────────┘
+            </div>
+            <p><strong>技术定义：</strong>队列管理器是 IBM MQ 的核心组件，它管理队列、通道和其他 MQ 对象。</p>
+
+            <h3>📬 2. 队列 (Queue)</h3>
+            <div class="tip-box">
+                <strong>通俗解释：</strong>队列就是一个"邮箱"，用来临时存放消息。发送方把消息放进邮箱，接收方从邮箱里取消息。
+            </div>
+
+            <h4>队列的类型</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>类型</th>
+                        <th>比喻</th>
+                        <th>用途</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>本地队列</td>
+                        <td>自家邮箱</td>
+                        <td>存储发送到本地的消息</td>
+                    </tr>
+                    <tr>
+                        <td>远程队列</td>
+                        <td>代寄邮箱</td>
+                        <td>指向其他队列管理器的队列</td>
+                    </tr>
+                    <tr>
+                        <td>传输队列</td>
+                        <td>中转站</td>
+                        <td>临时存储要发送到远程的消息</td>
+                    </tr>
+                    <tr>
+                        <td>死信队列</td>
+                        <td>退件处</td>
+                        <td>存储无法送达的消息</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="diagram">
+消息流向示意图：
+
+发送应用 ──> [本地队列] ──> [传输队列] ──> 网络 ──> [远程队列] ──> 接收应用
+            </div>
+
+            <h3>🛣️ 3. 通道 (Channel)</h3>
+            <div class="tip-box">
+                <strong>通俗解释：</strong>通道就是两个邮局之间的"运输路线"。消息通过这条路线从一个队列管理器传输到另一个队列管理器。
+            </div>
+
+            <div class="diagram">
+队列管理器 A                    队列管理器 B
+     │                              │
+     │    ═══════════════           │
+     │    │  消息通道  │            │
+     │    ═══════════════           │
+     │                              │
+            </div>
+
+            <p><strong>通道类型：</strong></p>
+            <ul>
+                <li><strong>发送通道 (Sender)</strong>：只发送消息</li>
+                <li><strong>接收通道 (Receiver)</strong>：只接收消息</li>
+                <li><strong>双向通道 (Requester/Server)</strong>：可以双向传输</li>
+            </ul>
+
+            <h3>📦 4. 消息 (Message)</h3>
+            <div class="tip-box">
+                <strong>通俗解释：</strong>消息就是"包裹"，里面装着要传递的数据。
+            </div>
+
+            <div class="diagram">
+┌─────────────────────────────────────┐
+│            消息 (Message)           │
+├─────────────────────────────────────┤
+│  消息头 (Header)                    │
+│  - 消息 ID                           │
+│  - 优先级                           │
+│  - 过期时间                         │
+│  - 格式类型                         │
+├─────────────────────────────────────┤
+│  消息体 (Body)                      │
+│  - 实际的业务数据                   │
+│  - 可以是文本、XML、JSON 等         │
+└─────────────────────────────────────┘
+            </div>
+
+            <h3>🚪 5. 监听器 (Listener)</h3>
+            <div class="tip-box">
+                <strong>通俗解释：</strong>监听器就像"门卫"，它一直守在门口，等待有连接请求时就通知队列管理器。
+            </div>
+
+            <div class="diagram">
+     外部连接请求
+           │
+           ▼
+    ┌─────────────┐
+    │  监听器     │ ──> 通知队列管理器
+    │  (门卫)     │      建立连接
+    └─────────────┘
+           │
+           ▼
+      队列管理器
+            </div>
+        </section>
+
+        <section id="how-it-works">
+            <h2>3. IBM MQ 工作原理</h2>
+
+            <h3>🔄 消息传递流程</h3>
+            <p>让我们通过一个具体的例子来理解 IBM MQ 的工作流程：</p>
+            <p><strong>场景：</strong>银行系统 A 需要向系统 B 发送转账请求</p>
+
+            <h4>步骤 1: 发送消息</h4>
+            <div class="diagram">
+┌──────────────┐                    ┌──────────────┐
+│  银行系统 A   │                    │  队列管理器   │
+│              │  ① 发送转账请求     │              │
+│  应用程序    │ ─────────────────> │  本地队列     │
+└──────────────┘                    └──────────────┘
+            </div>
+
+            <h4>步骤 2: 消息存储</h4>
+            <div class="diagram">
+┌──────────────┐
+│  队列管理器   │  ② 消息存入队列
+│              │     (持久化保存)
+│  [消息 1]    │
+│  [消息 2]    │
+│  [消息 3]    │
+└──────────────┘
+            </div>
+
+            <h4>步骤 3: 消息传输</h4>
+            <div class="diagram">
+┌──────────────┐                    ┌──────────────┐
+│  队列管理器   │  ③ 通过通道传输    │  队列管理器   │
+│              │ ──
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

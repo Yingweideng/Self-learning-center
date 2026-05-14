@@ -1,4 +1,697 @@
- 5.8 `locator.hover()` — 鼠标悬停
+ 5.8 `locator.hover()` — # Playwright 命令手册
+
+## 第 1 章：Playwright 安装与配置
+
+### 1.1 安装 Playwright
+
+**Node.js**
+```bash
+npm init playwright@latest
+```
+
+**Python**
+```bash
+pip install playwright
+playwright install
+```
+
+### 1.2 安装浏览器
+
+**Node.js**
+```bash
+npx playwright install
+```
+
+**Python**
+```bash
+playwright install
+```
+
+### 1.3 安装有头浏览器（用于调试）
+
+**Node.js**
+```bash
+npx playwright install --with-deps
+```
+
+**Python**
+```bash
+playwright install --with-deps
+```
+
+### 1.4 配置 playwright.config.ts
+
+```typescript
+import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './tests',
+  timeout: 30 * 1000,
+  expect: {
+    timeout: 5000
+  },
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: 'html',
+  use: {
+    baseURL: 'http://localhost:3000',
+    trace: 'on-first-retry',
+  },
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] },
+    },
+  ],
+});
+```
+
+## 第 2 章：基础概念
+
+### 2.1 Browser, Context, Page
+
+- **Browser**: 浏览器实例，对应一个浏览器进程
+- **BrowserContext**: 浏览器上下文，相当于一个无痕浏览会话
+- **Page**: 页面，一个标签页
+
+### 2.2 创建浏览器实例
+
+**Node.js**
+```javascript
+const { chromium } = require('playwright');
+
+(async () => {
+  const browser = await chromium.launch();
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  
+  // ... 执行操作
+  
+  await browser.close();
+})();
+```
+
+**Python**
+```python
+from playwright.sync_api import sync_playwright
+
+with sync_playwright() as p:
+    browser = p.chromium.launch()
+    context = browser.new_context()
+    page = context.new_page()
+    
+    # ... 执行操作
+    
+    browser.close()
+```
+
+### 2.3 Locator 定位器
+
+Locator 是 Playwright 的核心定位方式，支持自动等待和重试。
+
+**常用定位方法：**
+- `page.locator(selector)` - CSS 选择器
+- `page.getByText(text)` - 按文本内容
+- `page.getByRole(role)` - 按 ARIA 角色
+- `page.getByLabel(label)` - 按 label 文本
+- `page.getByPlaceholder(placeholder)` - 按占位符
+- `page.getByAltText(alt)` - 按图片 alt 文本
+- `page.getByTitle(title)` - 按 title 文本
+
+## 第 3 章：页面导航
+
+### 3.1 打开页面
+
+**Node.js**
+```javascript
+await page.goto('https://example.com');
+```
+
+**Python**
+```python
+page.goto('https://example.com')
+```
+
+### 3.2 等待页面加载完成
+
+**Node.js**
+```javascript
+await page.goto('https://example.com', { waitUntil: 'networkidle' });
+```
+
+**Python**
+```python
+page.goto('https://example.com', wait_until='networkidle')
+```
+
+**waitUntil 选项：**
+- `load` - 等待 load 事件
+- `domcontentloaded` - 等待 DOMContentLoaded 事件
+- `networkidle` - 等待网络空闲
+- `commit` - 等待网络响应接收
+
+### 3.3 刷新页面
+
+**Node.js**
+```javascript
+await page.reload();
+```
+
+**Python**
+```python
+page.reload()
+```
+
+### 3.4 前进/后退
+
+**Node.js**
+```javascript
+await page.goBack();
+await page.goForward();
+```
+
+**Python**
+```python
+page.go_back()
+page.go_forward()
+```
+
+### 3.5 获取当前 URL
+
+**Node.js**
+```javascript
+const url = page.url();
+```
+
+**Python**
+```python
+url = page.url
+```
+
+## 第 4 章：页面内容
+
+### 4.1 获取页面标题
+
+**Node.js**
+```javascript
+const title = await page.title();
+```
+
+**Python**
+```python
+title = page.title
+```
+
+### 4.2 获取页面 HTML
+
+**Node.js**
+```javascript
+const html = await page.content();
+```
+
+**Python**
+```python
+html = page.content()
+```
+
+### 4.3 截图
+
+**Node.js**
+```javascript
+await page.screenshot({ path: 'screenshot.png' });
+```
+
+**Python**
+```python
+page.screenshot(path='screenshot.png')
+```
+
+### 4.4 保存 PDF
+
+**Node.js**
+```javascript
+await page.pdf({ path: 'page.pdf', format: 'A4' });
+```
+
+**Python**
+```python
+page.pdf(path='page.pdf', format='A4')
+```
+
+### 4.5 执行 JavaScript
+
+**Node.js**
+```javascript
+const result = await page.evaluate(() => {
+  return document.title;
+});
+```
+
+**Python**
+```python
+result = page.evaluate("() => document.title")
+```
+
+### 4.6 等待元素出现
+
+**Node.js**
+```javascript
+await page.waitForSelector('.my-element');
+```
+
+**Python**
+```python
+page.wait_for_selector('.my-element')
+```
+
+### 4.7 等待函数返回真值
+
+**Node.js**
+```javascript
+await page.waitForFunction(() => window.innerWidth > 100);
+```
+
+**Python**
+```python
+page.wait_for_function("() => window.innerWidth > 100")
+```
+
+### 4.8 等待网络请求
+
+**Node.js**
+```javascript
+const [response] = await Promise.all([
+  page.waitForResponse('**/api/*'),
+  page.click('#submit')
+]);
+```
+
+**Python**
+```python
+with page.expect_response('**/api/*') as response_info:
+    page.click('#submit')
+response = response_info.value
+```
+
+## 第 5 章：页面动作
+
+### 5.1 点击元素
+
+**Node.js**
+```javascript
+await page.click('button');
+```
+
+**Python**
+```python
+page.click('button')
+```
+
+### 5.2 双击元素
+
+**Node.js**
+```javascript
+await page.dblclick('button');
+```
+
+**Python**
+```python
+page.dblclick('button')
+```
+
+### 5.3 输入文本
+
+**Node.js**
+```javascript
+await page.fill('input', 'Hello World');
+```
+
+**Python**
+```python
+page.fill('input', 'Hello World')
+```
+
+### 5.4 追加文本
+
+**Node.js**
+```javascript
+await page.type('input', 'Hello World', { delay: 100 });
+```
+
+**Python**
+```python
+page.type('input', 'Hello World', delay=100)
+```
+
+### 5.5 选择下拉选项
+
+**Node.js**
+```javascript
+await page.selectOption('select', 'option-value');
+```
+
+**Python**
+```python
+page.select_option('select', 'option-value')
+```
+
+### 5.6 勾选复选框
+
+**Node.js**
+```javascript
+await page.check('input[type="checkbox"]');
+```
+
+**Python**
+```python
+page.check('input[type="checkbox"]')
+```
+
+### 5.7 取消勾选
+
+**Node.js**
+```javascript
+await page.uncheck('input[type="checkbox"]');
+```
+
+**Python**
+```python
+page.uncheck('input[type="checkbox"]')
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 **Node.js**
 ```javascript
